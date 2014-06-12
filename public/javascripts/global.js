@@ -13,6 +13,9 @@ $(document).ready(function() {
 	// Add User buton click
 	$('#btnAddUser').on('click', addUser);
 
+	// Delete User link click
+	$('#userList table tbody').on('click', 'td a.linkdeleteuser', deleteUser);
+
 });
 
 // Functions
@@ -82,8 +85,8 @@ function addUser(event){
 		var newUser = {
 			'username' : $('#addUser fieldset input#inputUserName').val(),
 			'email' : $('#addUser fieldset input#inputUserEmail').val(),
-			'fullname' : $('#addUser fieldset input#inputUserFullName').val(),
-			'age' : $('#addUser fieldset input#inputUserAge').val(),
+			'fullname' : $('#addUser fieldset input#inputUserFullname').val(),
+			'age'   : $('#addUser fieldset input#inputUserAge').val(),
 			'location' : $('#addUser fieldset input#inputUserLocation').val(),
 			'gender' : $('#addUser fieldset input#inputUserGender').val()
 		}
@@ -116,4 +119,42 @@ function addUser(event){
 		alert('Please fill in all fields');
 		return false;
 	}
+};
+
+// Delete User
+function deleteUser(event){
+
+	// Prevent Link From Firing
+	event.preventDefault();
+
+	// Pop up a confirmation dialog
+	var confirmation = confirm('Are you sure you want to delete this user?');
+
+	// Check and make sure the user confirmed
+	if (confirmation === true) {
+
+		// If the user confirmed, do our delete
+		$.ajax({
+			type: 'DELETE',
+			url: '/users/deleteuser/' + $(this).attr('rel')
+		}).done(function(response){
+
+			// Check for successful (blank) response
+			if (response.msg === '') {
+
+			} else {
+				alert('Error: ' + response.msg);
+			}
+
+			// Update the table
+			populateTable();
+
+		});
+
+	} else {
+
+		// If the user user said no to the confirm, do nothing
+		return false;
+	}
+
 };
